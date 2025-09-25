@@ -444,3 +444,18 @@ function resetForm(form) {
         input.classList.remove('error', 'success');
     });
 }
+/**
+ * Establecer estado de carga en botón
+ */
+function setButtonLoading(button, loadingText) {
+    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingText}`;
+    button.disabled = true;
+}
+
+/**
+ * Restablecer botón a su estado normal
+ */
+function resetButtonLoading(button, originalText) {
+    button.innerHTML = originalText;
+    button.disabled = false;
+}
