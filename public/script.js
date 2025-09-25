@@ -193,3 +193,83 @@ function validateField(field) {
     
     return true;
 }
+
+/**
+ * Mostrar error en un campo
+ */
+function showFieldError(field, message) {
+    const formGroup = field.closest('.form-group');
+    const errorMsg = formGroup.querySelector('.error-message');
+    
+    if (!formGroup || !errorMsg) return;
+    
+    formGroup.classList.add('has-error');
+    formGroup.classList.remove('has-success');
+    field.classList.add('error');
+    field.classList.remove('success');
+    
+    errorMsg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    errorMsg.style.display = 'flex';
+}
+
+/**
+ * Mostrar éxito en un campo
+ */
+function showFieldSuccess(field) {
+    const formGroup = field.closest('.form-group');
+    
+    if (!formGroup) return;
+    
+    formGroup.classList.add('has-success');
+    formGroup.classList.remove('has-error');
+    field.classList.add('success');
+    field.classList.remove('error');
+}
+
+/**
+ * Limpiar errores de un campo
+ */
+function clearFieldError(field) {
+    const formGroup = field.closest('.form-group');
+    const errorMsg = formGroup ? formGroup.querySelector('.error-message') : null;
+    
+    if (!formGroup || !errorMsg) return;
+    
+    formGroup.classList.remove('has-error', 'has-success');
+    field.classList.remove('error', 'success');
+    errorMsg.style.display = 'none';
+}
+
+/**
+ * Mostrar alerta al usuario
+ */
+function showAlert(message, type = 'info', details = null) {
+    const alertContainer = document.getElementById('alertContainer');
+    if (!alertContainer) return;
+    
+    const alertId = 'alert_' + Date.now();
+    
+    let icon = 'fas fa-info-circle';
+    if (type === 'success') icon = 'fas fa-check-circle';
+    if (type === 'error') icon = 'fas fa-exclamation-triangle';
+    
+    const alertHtml = `
+        <div class="alert alert-${type}" id="${alertId}">
+            <i class="${icon}"></i>
+            <div>
+                <div>${message}</div>
+                ${details ? `<pre style="margin-top: 0.5rem; font-size: 0.85rem; opacity: 0.8;">${JSON.stringify(details, null, 2)}</pre>` : ''}
+            </div>
+        </div>
+    `;
+    
+    alertContainer.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Auto-eliminar después de 10 segundos
+    setTimeout(() => {
+        const alert = document.getElementById(alertId);
+        if (alert) {
+            alert.remove();
+        }
+    }, 10000);
+}
