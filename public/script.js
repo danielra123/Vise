@@ -408,3 +408,39 @@ async function handlePurchaseSubmit(e) {
         resetButtonLoading(submitBtn, originalText);
     }
 }
+
+/**
+ * Validar todo un formulario
+ */
+function validateForm(form) {
+    const inputs = form.querySelectorAll('.form-control[required]');
+    let isValid = true;
+    
+    inputs.forEach(input => {
+        if (!validateField(input)) {
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+/**
+ * Restablecer formulario a su estado inicial
+ */
+function resetForm(form) {
+    form.reset();
+    
+    // Limpiar validaciones
+    form.querySelectorAll('.form-group').forEach(group => {
+        group.classList.remove('has-error', 'has-success');
+        const errorMsg = group.querySelector('.error-message');
+        if (errorMsg) {
+            errorMsg.style.display = 'none';
+        }
+    });
+    
+    form.querySelectorAll('.form-control').forEach(input => {
+        input.classList.remove('error', 'success');
+    });
+}
