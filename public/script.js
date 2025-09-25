@@ -273,3 +273,138 @@ function showAlert(message, type = 'info', details = null) {
         }
     }, 10000);
 }
+
+/**
+ * Manejar envío del formulario de cliente
+ */
+async function handleClientSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    
+    // Validar todos los campos requeridos
+    if (!validateForm(form)) {
+        logger.error('Formulario de cliente inválido');
+        showAlert('Por favor corrija los errores en el formulario', 'error');
+        return;
+    }
+    
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Mostrar estado de carga
+    setButtonLoading(submitBtn, 'Procesando...');
+    
+    try {
+        const formData = new FormData(form);
+        const clientData = {
+            name: formData.get('name'),
+            country: formData.get('country'),
+            monthlyIncome: parseInt(formData.get('monthlyIncome')),
+            viseClub: formData.get('viseClub') === 'on',
+            cardType: formData.get('cardType')
+        };
+
+        logger.api('POST', '/client', clientData);
+
+        const response = await fetch(`${API_BASE}/client`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(clientData)
+        });
+
+        const result = await response.json();
+        
+        logger.api('POST', '/client', null, {
+            status: response.status,
+            data: result
+        });
+        
+        if (response.ok) {
+            logger.success('Cliente registrado exitosamente', result);
+            showAlert('Cliente registrado exitosamente', 'success', result);
+            resetForm(form);
+            loadClients();
+            updateStats();
+        } else {
+            logger.error('Error del servidor al registrar cliente', result);
+            showAlert('Error al registrar cliente', 'error', result);
+        }
+        
+    } catch (error) {
+        logger.error('Error de conexión al registrar cliente', error);
+        showAlert('Error de conexión con el servidor', 'error', { error: error.message });
+    } finally {
+        resetButtonLoading(submitBtn, originalText);
+    }
+}
+
+/**
+ * Manejar envío del formulario de compra
+ */
+async function handlePurchaseSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    
+    // Validar todos los campos requeridos
+    if (!validateForm(form)) {
+        logger.error('Formulario de compra inválido');
+        showAlert('Por favor corrija los errores en el formulario', 'error');
+        return;
+    }
+    
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Mostrar estado de carga
+    setButtonLoading(submitBtn, 'Procesando...');
+    
+    try {
+        const formData = new FormData(form);
+        const purchaseData = {
+            clientId: parseInt(formData.get('clientId')),
+            amount: parseFloat(formData.get('amount')),
+            currency: formData.get('currency'),
+            purchaseDate: new Date(formData.get('purchaseDate')).toISOString(),
+            purchaseCountry: formData.get('purchaseCountry')
+        };
+
+        logger.api('POST', '/purchase', purchaseData);
+
+        const response = await fetch(`${API_BASE}/purchase`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(purchaseData)
+        });
+
+        const result = await response.json();
+        
+        logger.api('POST', '/purchase', null, {
+            status: response.status,
+            data: result
+        });
+        
+        if (response.ok) {
+            logger.success('Pago procesado exitosamente', result);
+            showAlert('Pago procesado exitosamente', 'success', result);
+            resetForm(form);
+            // Restablecer fecha actual
+            const purchaseDateField = document.getElementById('purchaseDate');
+            if (purchaseDateField) {
+                purchaseDateField.value = new Date().toISOString().slice(0, 16);
+            }
+            updateStats();
+            incrementTransactionCount();
+        } else {
+            logger.error('Error del servidor al procesar pago', result);
+            showAlert('Error al procesar el pago', 'error', result);
+        }
+        
+    } catch (error) {
+        logger.error('Error de conexión al procesar pago', error);
+        showAlert('Error de conexión con el servidor', 'error', { error: error.message });
+    } finally {
+        resetButtonLoading(submitBtn, originalText);
+    }
+}
