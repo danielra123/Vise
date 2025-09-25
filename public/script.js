@@ -459,3 +459,67 @@ function resetButtonLoading(button, originalText) {
     button.innerHTML = originalText;
     button.disabled = false;
 }
+
+/**
+ * Cargar lista de clientes
+ */
+async function loadClients() {
+    const container = document.getElementById('clientsContainer');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    logger.log('Cargando lista de clientes...');
+    
+    try {
+        const response = await fetch(`${API_BASE}/clients`);
+        const clients = await response.json();
+        
+        logger.api('GET', '/clients', null, {
+            status: response.status,
+            clientsCount: clients.length,
+            data: clients
+        });
+        
+        if (clients.length === 0) {
+            logger.log('No hay clientes registrados');
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>No hay clientes registrados en el sistema</div>
+                </div>
+            `;
+            return;
+        }
+        
+        const clientsHtml = clients.map(client => `
+            <div class="client-card">
+                <div class="client-header">
+                    <div class="client-id">ID: ${client.clientId}</div>
+                    <div class="status-badge status-active">
+                        <i class="fas fa-circle"></i>
+                        Activo
+                    </div>
+                </div>
+                <div class="client-name">${client.name}</div>
+                <div class="client-details">
+                    <div><i class="fas fa-globe"></i> ${client.country}</div>
+                    <div><i class="fas fa-dollar-sign"></i> ${client.monthlyIncome.toLocaleString()} USD/mes</div>
+                    <div><i class="fas fa-credit-card"></i> Tarjeta ${client.cardType}</div>
+                    <div><i class="fas fa-star"></i> VISE CLUB: ${client.viseClub ? 'Activo' : 'Inactivo'}</div>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = `<div class="clients-grid">${clientsHtml}</div>`;
+        logger.success(`${clients.length} clientes cargados correctamente`);
+        
+    } catch (error) {
+        logger.error('Error al cargar clientes', error);
+        container.innerHTML = `
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>Error al cargar la lista de clientes</div>
+            </div>
+        `;
+    }
+}
