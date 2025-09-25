@@ -523,3 +523,60 @@ async function loadClients() {
         `;
     }
 }
+
+
+/**
+ * Actualizar estadísticas del dashboard
+ */
+async function updateStats() {
+    try {
+        const response = await fetch(`${API_BASE}/clients`);
+        const clients = await response.json();
+        
+        const totalClientsEl = document.getElementById('totalClients');
+        if (totalClientsEl) {
+            totalClientsEl.textContent = clients.length;
+        }
+        
+        // Mostrar transacciones del día actual
+        const today = new Date().toDateString();
+        const transactionCount = getTransactionCount(today);
+        const totalTransactionsEl = document.getElementById('totalTransactions');
+        if (totalTransactionsEl) {
+            totalTransactionsEl.textContent = transactionCount;
+        }
+        
+    } catch (error) {
+        console.error('Error updating stats:', error);
+    }
+}
+
+/**
+ * Incrementar contador de transacciones diarias
+ */
+function incrementTransactionCount() {
+    const today = new Date().toDateString();
+    let count = getTransactionCount(today);
+    count++;
+    
+    // Guardar en memoria (sin usar localStorage)
+    if (!window.transactionCounts) {
+        window.transactionCounts = {};
+    }
+    window.transactionCounts[today] = count;
+    
+    const totalTransactionsEl = document.getElementById('totalTransactions');
+    if (totalTransactionsEl) {
+        totalTransactionsEl.textContent = count;
+    }
+}
+
+/**
+ * Obtener contador de transacciones para una fecha
+ */
+function getTransactionCount(date) {
+    if (!window.transactionCounts) {
+        window.transactionCounts = {};
+    }
+    return window.transactionCounts[date] || 0;
+}
