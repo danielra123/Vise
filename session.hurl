@@ -9,7 +9,7 @@ POST {{host}}/client
   "viseClub": false,
   "cardType": "Classic"
 }
-HTTP 200
+HTTP 201
 [Captures]
 classic_id: jsonpath "$['clientId']"
 [Asserts]
@@ -26,7 +26,7 @@ POST {{host}}/client
   "viseClub": false,
   "cardType": "Gold"
 }
-HTTP 200
+HTTP 201
 [Captures]
 gold_id: jsonpath "$['clientId']"
 [Asserts]
@@ -56,7 +56,7 @@ POST {{host}}/client
   "viseClub": true,
   "cardType": "Platinum"
 }
-HTTP 200
+HTTP 201
 [Captures]
 platinum_id: jsonpath "$['clientId']"
 [Asserts]
@@ -85,7 +85,7 @@ POST {{host}}/client
   "viseClub": true,
   "cardType": "Black"
 }
-HTTP 200
+HTTP 201
 [Captures]
 black_id: jsonpath "$['clientId']"
 [Asserts]
@@ -114,7 +114,7 @@ POST {{host}}/client
   "viseClub": true,
   "cardType": "White"
 }
-HTTP 200
+HTTP 201
 [Captures]
 white_id: jsonpath "$['clientId']"
 [Asserts]
@@ -225,7 +225,7 @@ POST {{host}}/purchase
   "purchaseDate": "2025-10-04",
   "purchaseCountry": "USA"
 }
-HTTP/1.1 200
+HTTP 200
 [Asserts]
 jsonpath "$.purchase.discountApplied" == 91
 jsonpath "$.purchase.finalAmount" == 169
