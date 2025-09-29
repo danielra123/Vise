@@ -1,6 +1,6 @@
 # Proyecto VISE 1.0
 
-Este proyecto contiene la API VISE, desarrollada en **Node.js y lista para ejecutarse tanto de forma local como dentro de un contenedor Docker.  
+Este proyecto contiene la API *VISE, desarrollada en **Node.js* y lista para ejecutarse tanto de forma local como dentro de un contenedor *Docker*.  
 
 ---
 
@@ -13,7 +13,7 @@ Este proyecto contiene la API VISE, desarrollada en **Node.js y lista para ejecu
 
 ##  Ejecución local (sin Docker)
 
-1. Abrir la carpeta del proyecto en Visual Studio Code.  
+1. Abrir la carpeta del proyecto en *Visual Studio Code*.  
 2. Instalar dependencias (si aplica):  
    ```bash
    npm install
@@ -42,3 +42,4 @@ docker-compose up --build -d
 
 
 Abrir en el navegador:
+ http://localhost:3000
