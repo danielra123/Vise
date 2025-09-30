@@ -580,3 +580,5 @@ function getTransactionCount(date) {
     }
     return window.transactionCounts[date] || 0;
 }
+
+/** verificacion de datos */
