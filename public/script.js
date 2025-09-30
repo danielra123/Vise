@@ -1,7 +1,9 @@
+
 /**
  * VISE - Frontend JavaScript
  * Manejo de la interfaz de usuario para la plataforma de pagos
  */
+
 
 const API_BASE = '';
 
@@ -530,6 +532,7 @@ async function loadClients() {
     }
 }
 
+
 /**
  * Actualizar estadísticas del dashboard
  */
@@ -584,4 +587,9 @@ function getTransactionCount(date) {
         window.transactionCounts = {};
     }
     return window.transactionCounts[date] || 0;
+
 }
+
+
+/** Verificacion de datos y validacion */
+
