@@ -1,10 +1,13 @@
+/* --- Global Styles --- */
 * {
+    /* Reset de márgenes, paddings y box-sizing para todos los elementos */
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
 :root {
+    /* Variables de colores y sombras globales */
     --primary-color: #1e3a8a;
     --secondary-color: #3b82f6;
     --accent-color: #10b981;
@@ -22,13 +25,16 @@
 }
 
 body {
+    /* Estilos generales del body */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
 }
 
+/* --- Header --- */
 .header {
+    /* Estilos del encabezado principal */
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
     padding: 1rem 0;
@@ -39,6 +45,7 @@ body {
 }
 
 .header-content {
+    /* Contenedor interno del header */
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
@@ -48,6 +55,7 @@ body {
 }
 
 .logo {
+    /* Logo y nombre de la app */
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -56,25 +64,31 @@ body {
 }
 
 .logo i {
+    /* Icono del logo */
     background: rgba(255, 255, 255, 0.2);
     padding: 0.5rem;
     border-radius: 0.5rem;
 }
 
 .user-info {
+    /* Información del usuario en el header */
     display: flex;
     align-items: center;
     gap: 1rem;
     font-size: 0.9rem;
 }
 
+/* --- Contenedor principal --- */
 .container {
+    /* Contenedor general de la página */
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1rem;
 }
 
+/* --- Navegación por pestañas --- */
 .nav-tabs {
+    /* Contenedor de las pestañas de navegación */
     display: flex;
     background: var(--bg-white);
     border-radius: 0.75rem;
@@ -85,6 +99,7 @@ body {
 }
 
 .nav-tab {
+    /* Botón de cada pestaña */
     flex: 1;
     padding: 0.75rem 1rem;
     text-align: center;
@@ -102,20 +117,25 @@ body {
 }
 
 .nav-tab.active {
+    /* Pestaña activa */
     background: var(--primary-color);
     color: white;
     box-shadow: var(--shadow-sm);
 }
 
 .tab-content {
+    /* Contenido de cada pestaña (oculto por defecto) */
     display: none;
 }
 
 .tab-content.active {
+    /* Contenido de pestaña activa */
     display: block;
 }
 
+/* --- Tarjeta de formulario --- */
 .form-card {
+    /* Tarjeta que contiene el formulario */
     background: var(--bg-white);
     border-radius: 1rem;
     padding: 2rem;
@@ -125,6 +145,7 @@ body {
 }
 
 .form-header {
+    /* Encabezado del formulario */
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -134,12 +155,14 @@ body {
 }
 
 .form-header h2 {
+    /* Título del formulario */
     color: var(--text-primary);
     font-size: 1.5rem;
     font-weight: 600;
 }
 
 .form-header i {
+    /* Icono en el encabezado del formulario */
     font-size: 1.5rem;
     color: var(--primary-color);
     background: rgba(30, 58, 138, 0.1);
@@ -148,16 +171,19 @@ body {
 }
 
 .form-grid {
+    /* Grid de campos del formulario */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
 }
 
 .form-group {
+    /* Grupo de campo de formulario */
     margin-bottom: 1.5rem;
 }
 
 .form-group label {
+    /* Etiqueta de campo de formulario */
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
@@ -166,6 +192,7 @@ body {
 }
 
 .form-control {
+    /* Input de formulario */
     width: 100%;
     padding: 0.875rem 1rem;
     border: 2px solid var(--border-color);
@@ -176,28 +203,32 @@ body {
 }
 
 .form-control:focus {
+    /* Input enfocado */
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
 }
 
-/* Corregir validación - solo mostrar error cuando el campo ha sido tocado */
 .form-control.error {
+    /* Input con error */
     border-color: var(--danger-color);
     background-color: #fef2f2;
 }
 
 .form-control.success {
+    /* Input con éxito */
     border-color: var(--accent-color);
 }
 
-/* Remover estilos automáticos de invalid */
 .form-control:invalid {
+    /* Input inválido (removido estilo automático) */
     border-color: var(--border-color);
     box-shadow: none;
 }
 
+/* --- Checkbox personalizado --- */
 .checkbox-wrapper {
+    /* Contenedor de checkbox */
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -208,12 +239,15 @@ body {
 }
 
 .checkbox-wrapper input[type="checkbox"] {
+    /* Checkbox */
     width: 1.25rem;
     height: 1.25rem;
     accent-color: var(--primary-color);
 }
 
+/* --- Botones --- */
 .btn {
+    /* Botón base */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -230,42 +264,51 @@ body {
 }
 
 .btn:disabled {
+    /* Botón deshabilitado */
     opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;
 }
 
 .btn-primary {
+    /* Botón principal */
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
+    /* Hover botón principal */
     transform: translateY(-1px);
     box-shadow: var(--shadow-lg);
 }
 
 .btn-secondary {
+    /* Botón secundario */
     background: var(--bg-white);
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
 }
 
 .btn-secondary:hover:not(:disabled) {
+    /* Hover botón secundario */
     background: var(--primary-color);
     color: white;
 }
 
 .btn-success {
+    /* Botón de éxito */
     background: var(--accent-color);
     color: white;
 }
 
 .btn-full {
+    /* Botón de ancho completo */
     width: 100%;
 }
 
+/* --- Tipos de tarjeta --- */
 .card-types {
+    /* Grid de tipos de tarjeta */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 0.75rem;
@@ -275,6 +318,7 @@ body {
 }
 
 .card-type {
+    /* Tarjeta individual de tipo */
     padding: 0.75rem 0.5rem;
     text-align: center;
     border-radius: 0.5rem;
@@ -286,21 +330,25 @@ body {
 }
 
 .card-type:hover {
+    /* Hover de tipo de tarjeta */
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
-.classic { background: #64748b; color: white; }
-.gold { background: #fbbf24; color: #92400e; }
-.platinum { background: #8b5cf6; color: white; }
-.black { background: #1f2937; color: white; }
-.white { background: #f9fafb; color: #1f2937; border-color: var(--border-color); }
+.classic { background: #64748b; color: white; } /* Tarjeta clásica */
+.gold { background: #fbbf24; color: #92400e; } /* Tarjeta oro */
+.platinum { background: #8b5cf6; color: white; } /* Tarjeta platino */
+.black { background: #1f2937; color: white; } /* Tarjeta negra */
+.white { background: #f9fafb; color: #1f2937; border-color: var(--border-color); } /* Tarjeta blanca */
 
+/* --- Sección de resultados --- */
 .results-section {
     margin-top: 2rem;
 }
 
+/* --- Alertas --- */
 .alert {
+    /* Contenedor de alerta */
     padding: 1rem 1.25rem;
     border-radius: 0.5rem;
     margin-bottom: 1rem;
@@ -312,6 +360,7 @@ body {
 }
 
 @keyframes slideIn {
+    /* Animación de entrada de alerta */
     from {
         opacity: 0;
         transform: translateY(-10px);
@@ -323,24 +372,29 @@ body {
 }
 
 .alert-success {
+    /* Alerta de éxito */
     background: rgba(16, 185, 129, 0.1);
     border-left-color: var(--accent-color);
     color: #065f46;
 }
 
 .alert-error {
+    /* Alerta de error */
     background: rgba(239, 68, 68, 0.1);
     border-left-color: var(--danger-color);
     color: #991b1b;
 }
 
 .alert-info {
+    /* Alerta informativa */
     background: rgba(59, 130, 246, 0.1);
     border-left-color: var(--secondary-color);
     color: #1e40af;
 }
 
+/* --- Grid de clientes --- */
 .clients-grid {
+    /* Grid de tarjetas de clientes */
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1rem;
@@ -348,6 +402,7 @@ body {
 }
 
 .client-card {
+    /* Tarjeta individual de cliente */
     background: var(--bg-white);
     border: 1px solid var(--border-color);
     border-radius: 0.75rem;
@@ -356,11 +411,13 @@ body {
 }
 
 .client-card:hover {
+    /* Hover de tarjeta de cliente */
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
 }
 
 .client-header {
+    /* Encabezado de tarjeta de cliente */
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -368,6 +425,7 @@ body {
 }
 
 .client-id {
+    /* Identificador de cliente */
     background: var(--primary-color);
     color: white;
     padding: 0.25rem 0.75rem;
@@ -377,6 +435,7 @@ body {
 }
 
 .client-name {
+    /* Nombre del cliente */
     font-weight: 600;
     font-size: 1.1rem;
     color: var(--text-primary);
@@ -384,21 +443,26 @@ body {
 }
 
 .client-details {
+    /* Detalles del cliente */
     font-size: 0.9rem;
     color: var(--text-secondary);
     line-height: 1.5;
 }
 
 .client-details div {
+    /* Detalle individual */
     margin-bottom: 0.25rem;
 }
 
 .client-details i {
+    /* Icono de detalle */
     width: 16px;
     margin-right: 0.5rem;
 }
 
+/* --- Badges de estado --- */
 .status-badge {
+    /* Badge de estado */
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
@@ -409,11 +473,14 @@ body {
 }
 
 .status-active {
+    /* Badge de estado activo */
     background: rgba(16, 185, 129, 0.1);
     color: var(--accent-color);
 }
 
+/* --- Loader y spinner --- */
 .loading {
+    /* Contenedor de carga */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -421,6 +488,7 @@ body {
 }
 
 .spinner {
+    /* Spinner de carga */
     width: 2rem;
     height: 2rem;
     border: 3px solid var(--border-color);
@@ -430,11 +498,14 @@ body {
 }
 
 @keyframes spin {
+    /* Animación de spinner */
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
+/* --- Estadísticas --- */
 .stats-grid {
+    /* Grid de tarjetas de estadísticas */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
@@ -442,6 +513,7 @@ body {
 }
 
 .stat-card {
+    /* Tarjeta individual de estadística */
     background: var(--bg-white);
     padding: 1.5rem;
     border-radius: 0.75rem;
@@ -451,11 +523,13 @@ body {
 }
 
 .stat-card:hover {
+    /* Hover de tarjeta de estadística */
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
 }
 
 .stat-value {
+    /* Valor de estadística */
     font-size: 2rem;
     font-weight: 700;
     color: var(--primary-color);
@@ -463,21 +537,25 @@ body {
 }
 
 .stat-label {
+    /* Etiqueta de estadística */
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
-/* Validación visual mejorada */
+/* --- Validación visual de formularios --- */
 .form-group.has-error .form-control {
+    /* Input con error visual */
     border-color: var(--danger-color);
     background-color: #fef2f2;
 }
 
 .form-group.has-success .form-control {
+    /* Input con éxito visual */
     border-color: var(--accent-color);
 }
 
 .error-message {
+    /* Mensaje de error */
     color: var(--danger-color);
     font-size: 0.8rem;
     margin-top: 0.25rem;
@@ -487,6 +565,7 @@ body {
 }
 
 .success-message {
+    /* Mensaje de éxito */
     color: var(--accent-color);
     font-size: 0.8rem;
     margin-top: 0.25rem;
@@ -495,7 +574,9 @@ body {
     gap: 0.25rem;
 }
 
+/* --- Responsive --- */
 @media (max-width: 768px) {
+    /* Adaptación para tablets y móviles */
     .header-content {
         flex-direction: column;
         gap: 1rem;
@@ -519,6 +600,7 @@ body {
 }
 
 @media (max-width: 480px) {
+    /* Adaptación para móviles pequeños */
     .card-types {
         grid-template-columns: repeat(2, 1fr);
     }
