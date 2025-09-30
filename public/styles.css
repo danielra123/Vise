@@ -1,27 +1,38 @@
-/* --- Global Styles --- */
+/* --- Global Styles ---
+ * Esta sección establece los estilos base que afectan a toda la aplicación.
+ * El selector universal (*) se usa para realizar un "CSS Reset" que elimina
+ * los estilos predeterminados del navegador y asegura consistencia.
+ */
 * {
-    /* Reset de márgenes, paddings y box-sizing para todos los elementos */
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0;          /* Elimina márgenes predeterminados */
+    padding: 0;         /* Elimina rellenos predeterminados */
+    box-sizing: border-box; /* Incluye padding y border en el ancho total */
 }
 
 :root {
-    /* Variables de colores y sombras globales */
-    --primary-color: #1e3a8a;
-    --secondary-color: #3b82f6;
-    --accent-color: #10b981;
-    --danger-color: #ef4444;
-    --warning-color: #f59e0b;
-    --text-primary: #1f2937;
-    --text-secondary: #6b7280;
-    --bg-primary: #f8fafc;
-    --bg-white: #ffffff;
-    --border-color: #e5e7eb;
-    --border-error: #fecaca;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    /* Paleta de colores principal - Define los colores base de la aplicación */
+    --primary-color: #2c5282;      /* Azul oscuro para elementos principales */
+    --secondary-color: #4299e1;    /* Azul medio para elementos secundarios */
+    --accent-color: #38a169;       /* Verde para elementos de acento y éxito */
+    --danger-color: #e53e3e;       /* Rojo para errores y advertencias críticas */
+    --warning-color: #dd6b20;      /* Naranja para advertencias */
+    
+    /* Colores de texto - Jerarquía visual para contenido */
+    --text-primary: #2d3748;       /* Texto principal, alta legibilidad */
+    --text-secondary: #718096;     /* Texto secundario, menos prominente */
+    
+    /* Colores de fondo - Establece la jerarquía visual de capas */
+    --bg-primary: #f7fafc;         /* Fondo principal de la aplicación */
+    --bg-white: #ffffff;           /* Fondo blanco para tarjetas y elementos */
+    
+    /* Colores de bordes y estados */
+    --border-color: #cbd5e0;       /* Bordes sutiles para separación de elementos */
+    --border-error: #fed7d7;       /* Bordes para estados de error */
+    
+    /* Sistema de sombras - Añade profundidad y jerarquía */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);      /* Sombra sutil */
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);    /* Sombra media */
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);  /* Sombra pronunciada */
 }
 
 body {
@@ -32,16 +43,20 @@ body {
     line-height: 1.6;
 }
 
-/* --- Header --- */
+/* --- Header ---
+ * El encabezado es un elemento crítico que permanece visible en la parte superior.
+ * Utiliza un gradiente para dar profundidad visual y mantiene su posición fija
+ * mientras se desplaza la página.
+ */
 .header {
     /* Estilos del encabezado principal */
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
     padding: 1rem 0;
-    box-shadow: var(--shadow-md);
-    position: sticky;
+    box-shadow: var(--shadow-md);  /* Sombra para separación visual */
+    position: sticky;              /* Mantiene el header visible al hacer scroll */
     top: 0;
-    z-index: 100;
+    z-index: 100;                 /* Asegura que esté por encima de otros elementos */
 }
 
 .header-content {
@@ -245,22 +260,26 @@ body {
     accent-color: var(--primary-color);
 }
 
-/* --- Botones --- */
+/* --- Botones ---
+ * Sistema de botones con diferentes variantes y estados.
+ * Incluye estilos para botones primarios, secundarios, de éxito
+ * y estados como hover, disabled, etc.
+ */
 .btn {
-    /* Botón base */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    min-width: 140px;
+    /* Botón base - Clase fundamental para todos los botones */
+    display: inline-flex;          /* Permite alinear contenido interno */
+    align-items: center;          /* Centra verticalmente iconos y texto */
+    justify-content: center;      /* Centra horizontalmente contenido */
+    gap: 0.5rem;                 /* Espacio entre icono y texto */
+    padding: 1rem 2rem;          /* Espaciado interno consistente */
+    border: none;                /* Elimina borde predeterminado */
+    border-radius: 0.5rem;       /* Esquinas redondeadas */
+    font-size: 1rem;             /* Tamaño de texto legible */
+    font-weight: 600;            /* Texto semi-negrita para énfasis */
+    cursor: pointer;             /* Indica elemento interactivo */
+    transition: all 0.2s;        /* Animación suave en cambios */
+    text-decoration: none;       /* Elimina subrayado en links */
+    min-width: 140px;           /* Ancho mínimo para consistencia */
 }
 
 .btn:disabled {
