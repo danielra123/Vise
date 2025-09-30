@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISE - Plataforma de Pagos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-credit-card"></i>
+                <span>VISE</span>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-shield-alt"></i>
+                <span>Plataforma Segura de Pagos</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Estadísticas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalClients">0</div>
+                <div class="stat-label">Clientes Activos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTransactions">0</div>
+                <div class="stat-label">Transacciones Hoy</div>
+            </div>
+        </div>
+
+        <!-- Navegación por pestañas -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="register">
+                <i class="fas fa-user-plus"></i>
+                Registrar Cliente
+            </button>
+            <button class="nav-tab" data-tab="payment">
+                <i class="fas fa-credit-card"></i>
+                Procesar Pago
+            </button>
+            <button class="nav-tab" data-tab="clients">
+                <i class="fas fa-users"></i>
+                Gestionar Clientes
+            </button>
+        </div>
+
+        <!-- Pestaña de Registro -->
+        <div id="register" class="tab-content active">
+            <div class="form-card">
+                <div class="form-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h2>Registro de Nuevo Cliente</h2>
+                </div>
+                
+                <form id="clientForm" novalidate>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Nombre Completo *</label>
+                            <input type="text" id="name" name="name" class="form-control" required 
+                                   placeholder="Ingrese el nombre completo">
+                            <div class="error-message" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="country">País de Residencia *</label>
+                            <input type="text" id="country" name="country" class="form-control" required 
+                                   placeholder="Ej: Colombia, México, Argentina">
+                            <div class="error-message" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="monthlyIncome">Ingresos Mensuales (USD) *</label>
+                            <input type="number" id="monthlyIncome" name="monthlyIncome" class="form-control" 
+                                   required placeholder="0.00" min="0" step="0.01">
+                            <div class="error-message" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cardType">Tipo de Tarjeta *</label>
+                            <select id="cardType" name="cardType" class="form-control" required>
+                                <option value="">Seleccione un tipo de tarjeta</option>
+                                <option value="Classic">Classic - Para uso cotidiano</option>
+                                <option value="Gold">Gold - Beneficios adicionales</option>
+                                <option value="Platinum">Platinum - Acceso premium</option>
+                                <option value="Black">Black - Tarjeta exclusiva</option>
+                                <option value="White">White - Edición limitada</option>
+                            </select>
+                            <div class="error-message" style="display: none;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="viseClub" name="viseClub">
+                            <label for="viseClub">
+                                <strong>VISE CLUB</strong> - Programa de beneficios exclusivos
+                                <br><small>Acceso a descuentos, cashback y promociones especiales</small>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-plus"></i>
+                        Registrar Cliente
+                    </button>
+                </form>
+
+                <div class="card-types">
+                    <div class="card-type classic">Classic</div>
+                    <div class="card-type gold">Gold</div>
+                    <div class="card-type platinum">Platinum</div>
+                    <div class="card-type black">Black</div>
+                    <div class="card-type white">White</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pestaña de Pagos -->
+        <div id="payment" class="tab-content">
+            <div class="form-card">
+                <div class="form-header">
+                    <i class="fas fa-credit-card"></i>
+                    <h2>Procesamiento de Pago</h2>
+                </div>
+                
+                <form id="purchaseForm" novalidate>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="clientId">ID del Cliente *</label>
+                            <input type="number" id="clientId" name="clientId" class="form-control" 
+                                   required placeholder="Ingrese el ID del cliente" min="1">
+                            <div class="error-message" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="amount">Monto a Cobrar *</label>
+                            <input type="number" id="amount" name="amount" class="form-control" 
+                                   required placeholder="0.00" min="0.01" step="0.01">
+                            <div class="error-message" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="currency">Moneda *</label>
+                            <select id="currency" name="currency" class="form-control" required>
+                                <option value="USD">USD - Dólar Americano</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="GBP">GBP - Libra Esterlina</option>
+                                <option value="COP">COP - Peso Colombiano</option>
+                            </select>
+                            <div class="error-message" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="purchaseCountry">País de la Transacción *</label>
+                            <input type="text" id="purchaseCountry" name="purchaseCountry" class="form-control" 
+                                   required placeholder="Ej: Colombia">
+                            <div class="error-message" style="display: none;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="purchaseDate">Fecha y Hora de la Transacción *</label>
+                        <input type="datetime-local" id="purchaseDate" name="purchaseDate" 
+                               class="form-control" required>
+                        <div class="error-message" style="display: none;"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-lock"></i>
+                        Procesar Pago Seguro
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Pestaña de Clientes -->
+        <div id="clients" class="tab-content">
+            <div class="form-card">
+                <div class="form-header">
+                    <i class="fas fa-users"></i>
+                    <h2>Gestión de Clientes</h2>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <button type="button" class="btn btn-secondary" id="refreshClients">
+                        <i class="fas fa-sync-alt"></i>
+                        Actualizar Lista
+                    </button>
+                </div>
+                
+                <div id="clientsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Resultados -->
+        <div class="results-section">
+            <div id="alertContainer"></div>
+        </div>
+    </div>
+
+    <!-- Scripts al final del body para mejor rendimiento -->
+    <script src="script.js"></script>
+    <footer class="footer">
+        <div class="footer-content">
+            <h3>Autores</h3>
+            <ul>
+                <li>Juan Miguel Ramirez Mancilla</li>
+                <li>Daniel Estiven Ramirez Muñoz</li>
+                <li>Daniel Enrique Nuñez Niño</li>
+                <li>Daniel Mauricio Ospina Leguizamon</li>
+            </ul>
+        </div>
+    </footer>
+</body>
+</html>
+
