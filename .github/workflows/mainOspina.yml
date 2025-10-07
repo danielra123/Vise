@@ -21,10 +21,9 @@ on:
         required: true
 
 env:
-  # Datos de tu Azure Container Registry
   ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}.azurecr.io
   IMAGE_URL: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
-  AZURE_WEBAPP_URL: visebank1.azurewebsites.net
+  AZURE_WEBAPP_URL: viseBank1.azurewebsites.net
 
 jobs:
   build-and-push-image:
