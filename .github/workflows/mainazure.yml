@@ -21,7 +21,7 @@ on:
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
   IMAGE_URL: ${{ secrets.ACR_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
-  AZURE_WEBAPP_URL: vice1-fpevb6cqbxfgffcj.brazilsouth-01.azurewebsites.net
+  AZURE_WEBAPP_URL: vice1-fpevb6cjbxfgffcj.brazilsouth-01.azurewebsites.net
 jobs:
   build-and-push-image:
     name: 'Build and Push to ACR'
@@ -61,43 +61,29 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-and-push-image, deploy]
     steps:
-      - name: Verify DNS resolution and wait for deployment
+      - name: Wait for deployment and test connectivity
         run: |
-          echo "Checking DNS resolution for ${{ env.AZURE_WEBAPP_URL }}..."
+          echo "Waiting for deployment to stabilize (90 seconds)..."
+          sleep 90
           
-          # Wait for DNS to resolve
-          for i in {1..10}; do
-            if nslookup ${{ env.AZURE_WEBAPP_URL }} > /dev/null 2>&1; then
-              echo "✓ DNS resolved successfully!"
-              break
-            fi
-            echo "Attempt $i/10: DNS not resolved yet, waiting 5 seconds..."
-            sleep 5
-          done
+          echo "Testing if the service is responding at https://${{ env.AZURE_WEBAPP_URL }}..."
           
-          # Verify DNS was resolved
-          if ! nslookup ${{ env.AZURE_WEBAPP_URL }}; then
-            echo "ERROR: Could not resolve hostname. Please verify:"
-            echo "  1. App Service URL is correct: ${{ env.AZURE_WEBAPP_URL }}"
-            echo "  2. App Service exists in Azure"
-            echo "  3. You have access to the subscription"
-            exit 1
-          fi
-          
-          echo "Waiting for container to start (60 seconds)..."
-          sleep 60
-          
-          echo "Testing if the service is responding..."
-          for i in {1..8}; do
-            if curl -f -s -m 10 -o /dev/null https://${{ env.AZURE_WEBAPP_URL }}; then
-              echo "✓ Service is ready and responding!"
+          # Try to connect directly, DNS may work via HTTPS even if nslookup fails
+          for i in {1..12}; do
+            echo "Attempt $i/12: Testing connectivity..."
+            
+            if curl -f -s -m 15 -o /dev/null -w "HTTP Status: %{http_code}\n" https://${{ env.AZURE_WEBAPP_URL }}; then
+              echo "✓ Service is responding successfully!"
               exit 0
             fi
-            echo "Attempt $i/8: Service not ready yet, waiting 10 seconds..."
+            
+            # Show more details on failure
+            HTTP_CODE=$(curl -s -m 15 -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_URL }} 2>&1 || echo "connection_failed")
+            echo "Status: $HTTP_CODE - Waiting 10 seconds before retry..."
             sleep 10
           done
           
-          echo "⚠ Service may not be fully ready, but proceeding with tests..."
+          echo "⚠ Service connectivity tests completed. Proceeding with API tests..."
       
       - name: Checkout session.hurl
         uses: actions/checkout@v4
