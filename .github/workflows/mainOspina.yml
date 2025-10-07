@@ -14,16 +14,16 @@ on:
       AZURE_WEBAPP_NAME:
         description: 'Nombre del App Service creado en Azure'
         required: true
-        default: 'viseBank1'
+        default: 'visebank04'
       PORT:
         description: 'Port of the application'
         default: '443'
         required: true
 
 env:
-  ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}.azurecr.io
-  IMAGE_URL: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
-  AZURE_WEBAPP_URL: viseBank1.azurewebsites.net
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME_JUANMI }}.azurecr.io
+  IMAGE_URL: ${{ secrets.ACR_NAME_JUANMI }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
+  AZURE_WEBAPP_URL: visebank04.azurewebsites.net
 
 jobs:
   build-and-push-image:
@@ -36,9 +36,9 @@ jobs:
       - name: Docker Login
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}.azurecr.io
-          username: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}
-          password: ${{ secrets.ACR_PASSWORD_DANIEL_OSPINA }}
+          login-server: ${{ secrets.ACR_NAME_JUANMI }}.azurecr.io
+          username: ${{ secrets.ACR_NAME_JUANMI }}
+          password: ${{ secrets.ACR_PASSWORD_JUANMI }}
       
       - name: Build and Push to ACR
         uses: docker/build-push-action@v6
@@ -56,7 +56,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ github.event.inputs.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_DANIEL_OSPINA }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_JUANMI }}
           images: ${{ env.IMAGE_URL }}
   
   test-deploy:
