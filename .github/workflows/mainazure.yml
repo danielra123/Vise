@@ -21,6 +21,7 @@ on:
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
   IMAGE_URL: ${{ secrets.ACR_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
+  AZURE_WEBAPP_URL: vice1-fpevb6cqbxfgffcj.brazilsouth-01.azurewebsites.net
 jobs:
   build-and-push-image:
     name: 'Build and Push to ACR'
@@ -62,11 +63,11 @@ jobs:
     steps:
       - name: Verify DNS resolution and wait for deployment
         run: |
-          echo "Checking DNS resolution for ${{ github.event.inputs.AZURE_WEBAPP_NAME }}.azurewebsites.net..."
+          echo "Checking DNS resolution for ${{ env.AZURE_WEBAPP_URL }}..."
           
           # Wait for DNS to resolve
           for i in {1..10}; do
-            if nslookup ${{ github.event.inputs.AZURE_WEBAPP_NAME }}.azurewebsites.net > /dev/null 2>&1; then
+            if nslookup ${{ env.AZURE_WEBAPP_URL }} > /dev/null 2>&1; then
               echo "✓ DNS resolved successfully!"
               break
             fi
@@ -75,9 +76,9 @@ jobs:
           done
           
           # Verify DNS was resolved
-          if ! nslookup ${{ github.event.inputs.AZURE_WEBAPP_NAME }}.azurewebsites.net; then
+          if ! nslookup ${{ env.AZURE_WEBAPP_URL }}; then
             echo "ERROR: Could not resolve hostname. Please verify:"
-            echo "  1. App Service name is correct: ${{ github.event.inputs.AZURE_WEBAPP_NAME }}"
+            echo "  1. App Service URL is correct: ${{ env.AZURE_WEBAPP_URL }}"
             echo "  2. App Service exists in Azure"
             echo "  3. You have access to the subscription"
             exit 1
@@ -88,7 +89,7 @@ jobs:
           
           echo "Testing if the service is responding..."
           for i in {1..8}; do
-            if curl -f -s -m 10 -o /dev/null https://${{ github.event.inputs.AZURE_WEBAPP_NAME }}.azurewebsites.net; then
+            if curl -f -s -m 10 -o /dev/null https://${{ env.AZURE_WEBAPP_URL }}; then
               echo "✓ Service is ready and responding!"
               exit 0
             fi
@@ -110,7 +111,7 @@ jobs:
       
       - name: Test API
         run: |
-          hurl --variable host=https://${{ github.event.inputs.AZURE_WEBAPP_NAME }}.azurewebsites.net \
+          hurl --variable host=https://${{ env.AZURE_WEBAPP_URL }} \
                --connect-timeout 15 \
                --retry 3 \
                --retry-interval 5000 \
