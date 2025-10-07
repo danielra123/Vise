@@ -20,7 +20,7 @@ on:
         default: '443'
 
 env:
-  IMAGE_URL: ${{ secrets.ACR_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
+  IMAGE_URL: ${{ secrets.ACR_NAME_JUANMI }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
 
 jobs:
   build-and-push-image:
@@ -34,9 +34,9 @@ jobs:
       - name: Docker Login
         uses: azure/docker-login@v1
         with:
-          login-server: ${{ secrets.ACR_NAME }}.azurecr.io
-          username: ${{ secrets.ACR_NAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          login-server: ${{ secrets.ACR_NAME_JUANMI }}.azurecr.io
+          username: ${{ secrets.ACR_NAME_JUANMI }}
+          password: ${{ secrets.ACR_PASSWORD_JUANMI }}
 
       - name: Build and Push to ACR
         uses: docker/build-push-action@v6
@@ -51,11 +51,14 @@ jobs:
     needs: build-and-push-image
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Deploy to Azure Web App for Container
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ github.event.inputs.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_HARRIZON }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_JUANMI }}
           images: ${{ env.IMAGE_URL }}
 
   test-deploy:
@@ -82,4 +85,3 @@ jobs:
             --errorformat long \
             --verbose \
             --test session.hurl
-
