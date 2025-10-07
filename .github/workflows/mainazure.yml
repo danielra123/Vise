@@ -21,6 +21,7 @@ on:
         required: true
 
 env:
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
   IMAGE_URL: ${{ secrets.ACR_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
 
 jobs:
@@ -62,6 +63,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-and-push-image, deploy]
     steps:
+      - name: Wait for deployment to be ready
+        run: |
+          echo "Waiting for the container to start and be ready..."
+          sleep 90
+          
+          echo "Testing if the service is accessible..."
+          for i in {1..10}; do
+            if curl -f -s -o /dev/null https://${{ github.event.inputs.AZURE_WEBAPP_NAME }}.azurewebsites.net; then
+              echo "Service is ready!"
+              exit 0
+            fi
+            echo "Attempt $i: Service not ready yet, waiting 15 more seconds..."
+            sleep 15
+          done
+          
+          echo "Service is ready (or timeout reached), proceeding with tests..."
+      
       - name: Checkout session.hurl
         uses: actions/checkout@v3
         with:
@@ -74,8 +92,10 @@ jobs:
       
       - name: Test API
         run: |
-          hurl --variable host=https://${{ github.event.inputs.AZURE_WEBAPP_NAME }}.azurewebsites.net:${{ github.event.inputs.PORT }} \
-               --connect-timeout 20s \
+          hurl --variable host=https://${{ github.event.inputs.AZURE_WEBAPP_NAME }}.azurewebsites.net \
+               --connect-timeout 30s \
+               --retry 5 \
+               --retry-interval 10000 \
                --error-format long \
                --verbose \
                --test session.hurl
