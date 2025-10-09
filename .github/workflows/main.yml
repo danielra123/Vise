@@ -23,7 +23,7 @@ on:
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME_DANIELNUNEZ }}.azurecr.io
   IMAGE_URL: ${{ secrets.ACR_NAME_DANIELNUNEZ}}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
-  AZURE_WEBAPP_URL: visebank04.azurewebsites.net
+  AZURE_WEBAPP_URL: visebankd.azurewebsites.net
 
 jobs:
   build-and-push-image:
