@@ -1,0 +1,108 @@
+name: Azure Continuous Delivery
+
+on:
+  workflow_dispatch:
+    inputs:
+      IMAGE_REPOSITORY:
+        description: 'Repository of the image (same as declared in App Service creation)'
+        required: true
+        default: 'api-vise'
+      IMAGE_TAG:
+        description: 'Tag of the image'
+        required: true
+        default: 'latest'
+      AZURE_WEBAPP_NAME:
+        description: 'Nombre del App Service creado en Azure'
+        required: true
+        default: 'visebank04'
+      PORT:
+        description: 'Port of the application'
+        default: '443'
+        required: true
+
+env:
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME_DANIELNUNEZ }}.azurecr.io
+  IMAGE_URL: ${{ secrets.ACR_NAME_DANIELNUNEZ}}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
+  AZURE_WEBAPP_URL: visebank04.azurewebsites.net
+
+jobs:
+  build-and-push-image:
+    name: 'Build and Push to ACR'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Docker Login
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_NAME_DANIELNUNEZ }}.azurecr.io
+          username: ${{ secrets.ACR_NAME_DANIELNUNEZ }}
+          password: ${{ secrets.ACR_PASSWORD_DANIELNUNEZ }}
+      
+      - name: Build and Push to ACR
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.IMAGE_URL }}
+          file: Dockerfile
+  
+  deploy:
+    name: 'Deploy remote container to Azure'
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    steps:
+      - name: Deploy to Azure Web App for Container
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ github.event.inputs.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_DANIELNUNEZ }}
+          images: ${{ env.IMAGE_URL }}
+  
+  test-deploy:
+    name: 'Test deployed service'
+    runs-on: ubuntu-latest
+    needs: [build-and-push-image, deploy]
+    steps:
+      - name: Wait for deployment and test connectivity
+        run: |
+          echo "Waiting for deployment to stabilize (90 seconds)..."
+          sleep 90
+          
+          echo "Testing if the service is responding at https://${{ env.AZURE_WEBAPP_URL }}..."
+          
+          for i in {1..12}; do
+            echo "Attempt $i/12: Testing connectivity..."
+            
+            if curl -f -s -m 15 -o /dev/null -w "HTTP Status: %{http_code}\n" https://${{ env.AZURE_WEBAPP_URL }}; then
+              echo "✓ Service is responding successfully!"
+              exit 0
+            fi
+            
+            HTTP_CODE=$(curl -s -m 15 -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_URL }} 2>&1 || echo "connection_failed")
+            echo "Status: $HTTP_CODE - Waiting 10 seconds before retry..."
+            sleep 10
+          done
+          
+          echo "⚠ Service connectivity tests completed. Proceeding with API tests..."
+      
+      - name: Checkout session.hurl
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            session.hurl
+          sparse-checkout-cone-mode: false
+      
+      - name: Setup hurl (API testing tool)
+        uses: gacts/install-hurl@v1
+      
+      - name: Test API
+        run: |
+          hurl \
+            --variable host=https://${{ env.AZURE_WEBAPP_URL }} \
+            --connect-timeout 20s \
+            --retry 3 \
+            --retry-interval 5000 \
+            --error-format long \
+            --verbose \
+            --test session.hurl
