@@ -22,8 +22,8 @@ on:
 
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}.azurecr.io
-  IMAGE_URL: ${{ secrets.ACR_NAME_DANIEL_OSPINA  }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
-  AZURE_WEBAPP_URL: visebank04.azurewebsites.net
+  IMAGE_URL: ${{ env.ACR_LOGIN_SERVER }}/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
+
 
 jobs:
   build-and-push-image:
@@ -34,11 +34,12 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Docker Login
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.ACR_NAME_DANIEL_OSPINA  }}.azurecr.io
-          username: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}
-          password: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}
+  uses: azure/docker-login@v1
+  with:
+    login-server: ${{ secrets.ACR_NAME_DANIEL_OSPINA  }}.azurecr.io
+    username: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}
+    password: ${{ secrets.ACR_NAME_DANIEL_OSPINA }}
+
       
       - name: Build and Push to ACR
         uses: docker/build-push-action@v6
