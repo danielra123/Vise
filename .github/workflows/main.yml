@@ -14,7 +14,7 @@ on:
       AZURE_WEBAPP_NAME:
         description: 'Nombre del App Service creado en Azure'
         required: true
-        default: 'visebank04'
+        default: 'visebankd'
       PORT:
         description: 'Port of the application'
         default: '443'
