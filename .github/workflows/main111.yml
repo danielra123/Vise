@@ -1,0 +1,37 @@
+name: Deploy to Azure Web App - visebank04
+
+on:
+  push:
+    branches:
+      - main  # o la rama que uses
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Compilar la app
+        run: npm run build
+
+      - name: Login a Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Desplegar a Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: visebank04
+          slot-name: production
+          package: .
