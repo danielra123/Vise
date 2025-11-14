@@ -1,8 +1,45 @@
+// ===============================
+// 🔧 Cargar Variables de Entorno
+// ===============================
+require('dotenv').config();
+
+// ===============================
+// 🔍 Azure Application Insights
+// ===============================
+const appInsights = require("applicationinsights");
+
+appInsights
+  .setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING || "InstrumentationKey=dd2c0206-4c52-43e9-a88f-77e18c1a6915")
+  .setAutoDependencyCorrelation(true)
+  .setAutoCollectRequests(true)
+  .setAutoCollectPerformance(true)
+  .setAutoCollectExceptions(true)
+  .setAutoCollectDependencies(true)
+  .setAutoCollectConsole(true, true)
+  .setUseDiskRetryCaching(true)
+  .start();
+
+console.log("✅ Application Insights conectado correctamente");
+
+const client = appInsights.defaultClient;
+client.context.tags[client.context.keys.cloudRole] = "vise-node-api";
+client.trackEvent({
+  name: "server_started",
+  properties: { environment: process.env.NODE_ENV || "local" }
+});
+
+// ===============================
+// 📊 Axiom Logger Integration
+// ===============================
+const axiomLogger = require('./axiom-logger');
+
+// ===============================
+// 🚀 Configuración Express
+// ===============================
 const express = require('express');
 const path = require('path');
 const app = express();
 const PORT = 3000;
-
 // Middleware para parsear JSON
 app.use(express.json());
 
@@ -142,8 +179,15 @@ app.use((req, res, next) => {
     res.on('finish', () => {
         const executionTime = Date.now() - startTime;
         apiLogger.logRequest(req, res, requestData, responseData, executionTime);
+
+        // Enviar también a Axiom
+        axiomLogger.logRequest(req, res, {
+            executionTime: `${executionTime}ms`,
+            requestBody: requestData,
+            responseBody: responseData
+        });
     });
-    
+
     next();
 });
 
@@ -325,6 +369,12 @@ app.post('/client', (req, res) => {
 
         if (!validation.valid) {
             apiLogger.log('WARNING', `Cliente no elegible: ${validation.error}`);
+
+            // Log error a Axiom
+            axiomLogger.logValidationError(validation.error, {
+                name, country, monthlyIncome, viseClub, cardType
+            });
+
             return res.status(400).json({
                 status: 'Rejected',
                 error: validation.error
@@ -351,6 +401,9 @@ app.post('/client', (req, res) => {
         };
 
         apiLogger.log('SUCCESS', `Cliente registrado: ID ${client.clientId}, Tarjeta ${cardType}`);
+
+        // Log a Axiom
+        axiomLogger.logClientRegistration(client);
 
         res.status(201).json(response);
 
@@ -412,6 +465,20 @@ app.post('/purchase', (req, res) => {
         };
 
         apiLogger.log('SUCCESS', `Compra procesada: Cliente ${clientId}, Monto ${amount} ${currency}, Descuento ${benefits.discountApplied}`);
+
+        // Log a Axiom
+        axiomLogger.logPurchase({
+            clientId: client.clientId,
+            originalAmount: amount,
+            discountApplied: benefits.discountApplied,
+            finalAmount: benefits.finalAmount,
+            benefit: benefits.benefit
+        }, {
+            currency,
+            purchaseDate,
+            purchaseCountry,
+            cardType: client.cardType
+        });
 
         res.json(response);
 
