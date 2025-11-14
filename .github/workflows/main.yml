@@ -14,7 +14,7 @@ on:
       AZURE_WEBAPP_NAME:
         description: 'Nombre del App Service creado en Azure'
         required: true
-        default: 'webappvice'
+        default: 'vise-api-app'
       PORT:
         description: 'Port of the application'
         default: '443'
@@ -23,7 +23,7 @@ on:
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io
   IMAGE_URL: ${{ secrets.ACR_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_REPOSITORY }}:${{ github.event.inputs.IMAGE_TAG }}
-  AZURE_WEBAPP_URL: webappvice.azurewebsites.net
+  AZURE_WEBAPP_URL: vise-api-app.azurewebsites.net
 
 jobs:
   build-and-push-image:
