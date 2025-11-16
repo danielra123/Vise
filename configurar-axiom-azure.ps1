@@ -3,12 +3,12 @@
 Write-Host "🔧 Configurando Axiom en Azure App Service..." -ForegroundColor Cyan
 Write-Host ""
 
-$AXIOM_TOKEN = "xaat-4b39648e-d2fb-45eb-aa4d-68ce3bbda173"
+$AXIOM_TOKEN = "xaat-15218009-c82e-41e6-8cb2-f4c7a2dddc8a"
 $AXIOM_DATASET = "vise-api-logs"
 $APP_NAME = "vise-api-app"
 
 Write-Host "📋 Configuración:" -ForegroundColor Yellow
-Write-Host "   Token: xaat-4b39...173" -ForegroundColor Gray
+Write-Host "   Token: xaat-1521...dc8a" -ForegroundColor Gray
 Write-Host "   Dataset: $AXIOM_DATASET" -ForegroundColor Gray
 Write-Host "   App Service: $APP_NAME" -ForegroundColor Gray
 Write-Host ""
