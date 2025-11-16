@@ -7,7 +7,7 @@ class AxiomLogger {
     constructor() {
         this.enabled = false;
         this.axiom = null;
-        this.dataset = process.env.AXIOM_DATASET || 'vise-api-axiom';
+        this.dataset = process.env.AXIOM_DATASET || 'vise-api-logs';
 
         // Inicializar Axiom si hay token configurado
         if (process.env.AXIOM_TOKEN) {
