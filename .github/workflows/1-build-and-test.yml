@@ -1,11 +1,6 @@
-# ====================================================================
-# WORKFLOW 1: Construcción y Testing con Docker
-# ====================================================================
-# Este workflow construye la imagen Docker y ejecuta tests de la API
-# sin hacer despliegue a Azure
-# ====================================================================
 
-name: 1️⃣ Build and Test (Docker)
+
+name: Build and Test (Docker)
 
 on:
   # Ejecutar manualmente
@@ -43,31 +38,31 @@ jobs:
       # 3. Construir imagen Docker
       - name: Build Docker image
         run: |
-          echo "🐳 Construyendo imagen Docker..."
+          echo " Construyendo imagen Docker..."
           docker build -t vise-api:latest .
-          echo "✅ Imagen construida exitosamente"
+          echo " Imagen construida exitosamente"
 
       # 4. Verificar que la imagen existe
       - name: Verify Docker image
         run: |
-          echo "📋 Imágenes Docker disponibles:"
+          echo " Imágenes Docker disponibles:"
           docker images | grep vise-api
 
       # 5. Levantar contenedor
       - name: Run container
         run: |
-          echo "🚀 Levantando contenedor..."
+          echo " Levantando contenedor..."
           docker run -d -p ${{ github.event.inputs.PORT || 3000 }}:3000 --name vise-api vise-api:latest
-          echo "⏳ Esperando que el contenedor esté listo..."
+          echo " Esperando que el contenedor esté listo..."
           sleep 10
 
       # 6. Verificar que el contenedor está corriendo
       - name: Check container status
         run: |
-          echo "📊 Estado del contenedor:"
+          echo " Estado del contenedor:"
           docker ps -a
           echo ""
-          echo "📝 Logs del contenedor:"
+          echo " Logs del contenedor:"
           docker logs vise-api
 
       # 7. Instalar herramienta de testing (Hurl)
@@ -77,27 +72,27 @@ jobs:
       # 8. Ejecutar tests de la API
       - name: Test API with Hurl
         run: |
-          echo "🧪 Ejecutando tests de la API..."
+          echo " Ejecutando tests de la API..."
           hurl \
             --variable host=http://localhost:${{ github.event.inputs.PORT || 3000 }} \
             --error-format long \
             --verbose \
             --test \
             session.hurl
-          echo "✅ Tests completados exitosamente"
+          echo " Tests completados exitosamente"
 
       # 9. Mostrar logs finales si hay error
       - name: Show container logs on failure
         if: failure()
         run: |
-          echo "❌ Tests fallaron. Mostrando logs del contenedor:"
+          echo " Tests fallaron. Mostrando logs del contenedor:"
           docker logs vise-api
 
       # 10. Limpiar contenedor
       - name: Cleanup
         if: always()
         run: |
-          echo "🧹 Limpiando contenedor..."
+          echo " Limpiando contenedor..."
           docker stop vise-api || true
           docker rm vise-api || true
 
