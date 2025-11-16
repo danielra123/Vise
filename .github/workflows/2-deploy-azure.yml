@@ -1,11 +1,6 @@
-# ====================================================================
-# WORKFLOW 2: Despliegue Automatizado en Azure
-# ====================================================================
-# Este workflow construye la imagen Docker, la sube a Azure Container
-# Registry (ACR) y la despliega en Azure App Service
-# ====================================================================
 
-name: 2️⃣ Deploy to Azure
+
+name:  Deploy to Azure
 
 on:
   # Ejecutar manualmente
@@ -65,8 +60,8 @@ jobs:
       # 4. Verificar imagen subida
       - name: Verify image pushed
         run: |
-          echo "✅ Imagen subida exitosamente a ACR:"
-          echo "   📦 Image URL: ${{ env.IMAGE_URL }}"
+          echo " Imagen subida exitosamente a ACR:"
+          echo "    Image URL: ${{ env.IMAGE_URL }}"
 
   # ========================================
   # JOB 2: Deploy a Azure App Service
@@ -88,8 +83,8 @@ jobs:
       # 2. Confirmar deployment
       - name: Deployment confirmation
         run: |
-          echo "✅ Deployment completado"
-          echo "🌐 URL: https://${{ env.AZURE_WEBAPP_URL }}"
+          echo " Deployment completado"
+          echo " URL: https://${{ env.AZURE_WEBAPP_URL }}"
 
   # ========================================
   # JOB 3: Test del servicio desplegado
@@ -103,19 +98,19 @@ jobs:
       # 1. Esperar a que el deployment se estabilice
       - name: Wait for deployment to stabilize
         run: |
-          echo "⏳ Esperando que el deployment se estabilice (90 segundos)..."
+          echo " Esperando que el deployment se estabilice (90 segundos)..."
           sleep 90
 
       # 2. Test de conectividad
       - name: Test service connectivity
         run: |
-          echo "🔍 Probando conectividad con https://${{ env.AZURE_WEBAPP_URL }}..."
+          echo " Probando conectividad con https://${{ env.AZURE_WEBAPP_URL }}..."
 
           for i in {1..12}; do
-            echo "📡 Intento $i/12: Probando conectividad..."
+            echo " Intento $i/12: Probando conectividad..."
 
             if curl -f -s -m 15 -o /dev/null -w "HTTP Status: %{http_code}\n" https://${{ env.AZURE_WEBAPP_URL }}; then
-              echo "✅ ¡Servicio respondiendo exitosamente!"
+              echo " ¡Servicio respondiendo exitosamente!"
               exit 0
             fi
 
@@ -124,7 +119,7 @@ jobs:
             sleep 10
           done
 
-          echo "⚠️ Tests de conectividad completados. Continuando con tests de API..."
+          echo " Tests de conectividad completados. Continuando con tests de API..."
 
       # 3. Checkout del archivo de tests
       - name: Checkout test files
@@ -141,7 +136,7 @@ jobs:
       # 5. Ejecutar tests de API en Azure
       - name: Run API tests on Azure
         run: |
-          echo "🧪 Ejecutando tests de API en Azure..."
+          echo " Ejecutando tests de API en Azure..."
           hurl \
             --variable host=https://${{ env.AZURE_WEBAPP_URL }} \
             --connect-timeout 20s \
@@ -151,7 +146,7 @@ jobs:
             --verbose \
             --test \
             session.hurl
-          echo "✅ Tests de API completados exitosamente"
+          echo " Tests de API completados exitosamente"
 
   # ========================================
   # JOB 4: Verificar logs y monitoreo
@@ -165,17 +160,17 @@ jobs:
       - name: Deployment summary
         run: |
           echo "╔════════════════════════════════════════════════════════════╗"
-          echo "║           ✅ DEPLOYMENT COMPLETADO EXITOSAMENTE           ║"
+          echo "║            DEPLOYMENT COMPLETADO EXITOSAMENTE           ║"
           echo "╚════════════════════════════════════════════════════════════╝"
           echo ""
-          echo "🌐 URL de la aplicación:"
+          echo " URL de la aplicación:"
           echo "   https://${{ env.AZURE_WEBAPP_URL }}"
           echo ""
-          echo "📦 Imagen Docker desplegada:"
+          echo " Imagen Docker desplegada:"
           echo "   ${{ env.IMAGE_URL }}"
           echo ""
-          echo "📊 Verifica los logs en:"
+          echo " Verifica los logs en:"
           echo "   • Axiom: https://app.axiom.co"
           echo "   • Azure Application Insights: https://portal.azure.com"
           echo ""
-          echo "✅ Todos los tests pasaron exitosamente"
+          echo " Todos los tests pasaron exitosamente"
