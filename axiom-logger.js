@@ -1,6 +1,3 @@
-// ===============================
-// 📊 Axiom Logger Configuration
-// ===============================
 const { Axiom } = require('@axiomhq/js');
 
 class AxiomLogger {
@@ -9,7 +6,6 @@ class AxiomLogger {
         this.axiom = null;
         this.dataset = process.env.AXIOM_DATASET || 'vise-api-logs';
 
-        // Inicializar Axiom si hay token configurado
         if (process.env.AXIOM_TOKEN) {
             try {
                 this.axiom = new Axiom({
@@ -26,12 +22,6 @@ class AxiomLogger {
         }
     }
 
-    /**
-     * Envía un log a Axiom
-     * @param {string} level - Nivel del log (info, error, warning, success)
-     * @param {string} message - Mensaje del log
-     * @param {object} metadata - Datos adicionales
-     */
     async log(level, message, metadata = {}) {
         if (!this.enabled || !this.axiom) {
             return;
@@ -53,37 +43,22 @@ class AxiomLogger {
         }
     }
 
-    /**
-     * Log de información general
-     */
     async info(message, metadata = {}) {
         return this.log('info', message, metadata);
     }
 
-    /**
-     * Log de éxito
-     */
     async success(message, metadata = {}) {
         return this.log('success', message, metadata);
     }
 
-    /**
-     * Log de advertencia
-     */
     async warning(message, metadata = {}) {
         return this.log('warning', message, metadata);
     }
 
-    /**
-     * Log de error
-     */
     async error(message, metadata = {}) {
         return this.log('error', message, metadata);
     }
 
-    /**
-     * Log de request HTTP
-     */
     async logRequest(req, res, metadata = {}) {
         if (!this.enabled) return;
 
@@ -93,22 +68,14 @@ class AxiomLogger {
             message: `${req.method} ${req.originalUrl}`,
             service: 'vise-payment-api',
             environment: process.env.NODE_ENV || 'development',
-
-            // Datos de la request
             method: req.method,
             url: req.originalUrl,
             path: req.path,
             statusCode: res.statusCode,
-
-            // Datos del cliente
             ip: req.ip || req.connection.remoteAddress,
             userAgent: req.get('User-Agent'),
-
-            // Headers importantes
             contentType: req.get('Content-Type'),
             origin: req.get('Origin'),
-
-            // Metadata adicional
             ...metadata
         };
 
@@ -119,9 +86,6 @@ class AxiomLogger {
         }
     }
 
-    /**
-     * Log de transacción de cliente
-     */
     async logClientRegistration(client, metadata = {}) {
         return this.log('info', 'Cliente registrado', {
             event_type: 'client_registration',
@@ -133,9 +97,6 @@ class AxiomLogger {
         });
     }
 
-    /**
-     * Log de compra procesada
-     */
     async logPurchase(purchase, metadata = {}) {
         return this.log('info', 'Compra procesada', {
             event_type: 'purchase',
@@ -148,9 +109,6 @@ class AxiomLogger {
         });
     }
 
-    /**
-     * Log de error de validación
-     */
     async logValidationError(error, metadata = {}) {
         return this.log('warning', 'Error de validación', {
             event_type: 'validation_error',
@@ -159,9 +117,6 @@ class AxiomLogger {
         });
     }
 
-    /**
-     * Asegurar que todos los logs se envíen antes de cerrar
-     */
     async flush() {
         if (this.enabled && this.axiom) {
             try {
@@ -174,10 +129,8 @@ class AxiomLogger {
     }
 }
 
-// Exportar instancia singleton
 const axiomLogger = new AxiomLogger();
 
-// Asegurar que los logs se envíen al cerrar la aplicación
 process.on('beforeExit', async () => {
     await axiomLogger.flush();
 });

@@ -4,12 +4,6 @@ const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http')
 const { Resource } = require('@opentelemetry/resources');
 const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
 
-// ===============================
-// 🔍 Configuración de Exportadores
-// ===============================
-
-// Exportador para Axiom (OTLP) - PRINCIPAL
-// Axiom acepta datos OTLP directamente en: https://api.axiom.co/v1/traces
 const axiomExporter = process.env.AXIOM_TOKEN ? new OTLPTraceExporter({
   url: 'https://api.axiom.co/v1/traces',
   headers: {
@@ -18,7 +12,6 @@ const axiomExporter = process.env.AXIOM_TOKEN ? new OTLPTraceExporter({
   },
 }) : null;
 
-// Exportador para Grafana Tempo (OPCIONAL - solo si está configurado)
 const tempoExporter = process.env.TEMPO_URL && process.env.TEMPO_TOKEN ? new OTLPTraceExporter({
   url: process.env.TEMPO_URL,
   headers: {
@@ -28,11 +21,6 @@ const tempoExporter = process.env.TEMPO_URL && process.env.TEMPO_TOKEN ? new OTL
   },
 }) : null;
 
-// ===============================
-// 📊 SDK de OpenTelemetry
-// ===============================
-
-// Determinar qué exportador usar
 let traceExporter;
 let exporterName;
 
@@ -47,7 +35,6 @@ if (axiomExporter) {
   traceExporter = null;
 }
 
-// Solo iniciar SDK si hay un exportador configurado
 if (traceExporter) {
   const sdk = new NodeSDK({
     resource: new Resource({

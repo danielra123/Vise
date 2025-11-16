@@ -1,11 +1,4 @@
-// ===============================
-// 🔧 Cargar Variables de Entorno
-// ===============================
 require('dotenv').config();
-
-// ===============================
-// 🔍 Azure Application Insights
-// ===============================
 const appInsights = require("applicationinsights");
 
 appInsights
@@ -28,22 +21,12 @@ client.trackEvent({
   properties: { environment: process.env.NODE_ENV || "local" }
 });
 
-// ===============================
-// 📊 Axiom Logger Integration
-// ===============================
 const axiomLogger = require('./axiom-logger');
-
-// ===============================
-// 🚀 Configuración Express
-// ===============================
 const express = require('express');
 const path = require('path');
 const app = express();
 const PORT = 3000;
-// Middleware para parsear JSON
 app.use(express.json());
-
-// Sistema de logging profesional
 const colors = {
     reset: '\x1b[0m',
     bright: '\x1b[1m',
@@ -87,7 +70,6 @@ class APILogger {
         const userAgent = req.get('User-Agent') || 'Unknown';
         const ip = req.ip || req.connection.remoteAddress || 'Unknown';
 
-        // Crear entrada del historial
         const requestEntry = {
             id: this.requestHistory.length + 1,
             timestamp,
@@ -101,15 +83,11 @@ class APILogger {
             responseData
         };
 
-        // Agregar al historial
         this.requestHistory.push(requestEntry);
 
-        // Mantener solo los últimos 100 registros
         if (this.requestHistory.length > 100) {
             this.requestHistory.shift();
         }
-
-        // Log en consola con colores
         const statusColor = statusCode >= 400 ? colors.red : 
                            statusCode >= 300 ? colors.yellow : colors.green;
         
@@ -160,27 +138,20 @@ class APILogger {
 
 const apiLogger = new APILogger();
 
-// Middleware de logging personalizado
 app.use((req, res, next) => {
     const startTime = Date.now();
-    
-    // Capturar datos de la request
     const requestData = req.method !== 'GET' ? req.body : null;
-    
-    // Interceptar el res.json para capturar la response
     const originalJson = res.json;
     let responseData = null;
-    
+
     res.json = function(body) {
         responseData = body;
         return originalJson.call(this, body);
     };
-    
+
     res.on('finish', () => {
         const executionTime = Date.now() - startTime;
         apiLogger.logRequest(req, res, requestData, responseData, executionTime);
-
-        // Enviar también a Axiom
         axiomLogger.logRequest(req, res, {
             executionTime: `${executionTime}ms`,
             requestBody: requestData,
@@ -191,7 +162,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Habilitar CORS
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -199,17 +169,11 @@ app.use((req, res, next) => {
     next();
 });
 
-// Servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Base de datos en memoria para clientes
 let clients = [];
 let nextClientId = 1;
-
-// Países restringidos para tarjetas Black y White
 const RESTRICTED_COUNTRIES = ['China', 'Vietnam', 'India', 'Iran'];
-
-// Configuración de tarjetas
 const CARD_CONFIG = {
     Classic: {
         minIncome: 0,
@@ -238,7 +202,6 @@ const CARD_CONFIG = {
     }
 };
 
-// Función para validar elegibilidad de tarjeta
 function validateCardEligibility(client, cardType) {
     const config = CARD_CONFIG[cardType];
     if (!config) {
@@ -269,7 +232,6 @@ function validateCardEligibility(client, cardType) {
     return { valid: true };
 }
 
-// Función para calcular beneficios
 function calculateBenefits(client, purchase) {
     const { cardType } = client;
     const { amount, purchaseDate, purchaseCountry } = purchase;
@@ -348,7 +310,6 @@ function calculateBenefits(client, purchase) {
     };
 }
 
-// POST /client - Registrar cliente
 app.post('/client', (req, res) => {
     apiLogger.log('INFO', 'Procesando registro de cliente...');
     
@@ -369,12 +330,9 @@ app.post('/client', (req, res) => {
 
         if (!validation.valid) {
             apiLogger.log('WARNING', `Cliente no elegible: ${validation.error}`);
-
-            // Log error a Axiom
             axiomLogger.logValidationError(validation.error, {
                 name, country, monthlyIncome, viseClub, cardType
             });
-
             return res.status(400).json({
                 status: 'Rejected',
                 error: validation.error
@@ -401,10 +359,7 @@ app.post('/client', (req, res) => {
         };
 
         apiLogger.log('SUCCESS', `Cliente registrado: ID ${client.clientId}, Tarjeta ${cardType}`);
-
-        // Log a Axiom
         axiomLogger.logClientRegistration(client);
-
         res.status(201).json(response);
 
     } catch (error) {
@@ -416,7 +371,6 @@ app.post('/client', (req, res) => {
     }
 });
 
-// POST /purchase - Procesar compra
 app.post('/purchase', (req, res) => {
     apiLogger.log('INFO', 'Procesando compra...');
     
@@ -465,8 +419,6 @@ app.post('/purchase', (req, res) => {
         };
 
         apiLogger.log('SUCCESS', `Compra procesada: Cliente ${clientId}, Monto ${amount} ${currency}, Descuento ${benefits.discountApplied}`);
-
-        // Log a Axiom
         axiomLogger.logPurchase({
             clientId: client.clientId,
             originalAmount: amount,
@@ -479,7 +431,6 @@ app.post('/purchase', (req, res) => {
             purchaseCountry,
             cardType: client.cardType
         });
-
         res.json(response);
 
     } catch (error) {
@@ -491,20 +442,17 @@ app.post('/purchase', (req, res) => {
     }
 });
 
-// GET /clients - Obtener todos los clientes
 app.get('/clients', (req, res) => {
     apiLogger.log('INFO', `Consultando lista de clientes. Total: ${clients.length}`);
     res.json(clients);
 });
 
-// GET /api/stats - Endpoint para ver estadísticas de la API
 app.get('/api/stats', (req, res) => {
     const stats = apiLogger.getStats();
     apiLogger.log('INFO', 'Consultando estadísticas de la API');
     res.json(stats);
 });
 
-// GET /api/history - Endpoint para ver historial de peticiones
 app.get('/api/history', (req, res) => {
     const { limit = 10 } = req.query;
     const history = apiLogger.requestHistory.slice(-parseInt(limit));
@@ -516,12 +464,10 @@ app.get('/api/history', (req, res) => {
     });
 });
 
-// Ruta principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 404 handler
 app.use('*', (req, res) => {
     apiLogger.log('WARNING', `Ruta no encontrada: ${req.method} ${req.originalUrl}`);
     res.status(404).json({
@@ -529,8 +475,6 @@ app.use('*', (req, res) => {
         error: 'Ruta no encontrada'
     });
 });
-
-// Iniciar servidor
 app.listen(PORT, () => {
     apiLogger.log('SUCCESS', `🚀 Servidor VISE API ejecutándose en http://localhost:${PORT}`);
     console.log(`\n${colors.cyan}📋 Endpoints disponibles:${colors.reset}`);

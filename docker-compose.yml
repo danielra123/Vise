@@ -13,7 +13,7 @@ services:
       - NODE_ENV=production
       - PORT=3000
     volumes:
-      # Para desarrollo, comentar esta línea en producción
+      
       - ./public:/app/public:ro
     networks:
       - vise-network
