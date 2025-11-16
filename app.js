@@ -4,6 +4,13 @@
 require('dotenv').config();
 
 // ===============================
+// 📊 OpenTelemetry - Trazas Distribuidas
+// ===============================
+// Esto debe cargarse ANTES de cualquier otra librería
+// para instrumentar automáticamente Express, HTTP, etc.
+require('./tracing');
+
+// ===============================
 // 🔍 Azure Application Insights
 // ===============================
 const appInsights = require("applicationinsights");
